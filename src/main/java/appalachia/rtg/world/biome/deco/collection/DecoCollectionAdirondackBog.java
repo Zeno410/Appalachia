@@ -1,191 +1,130 @@
 package appalachia.rtg.world.biome.deco.collection;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.world.gen.feature.WorldGenTrees;
-import net.minecraft.world.gen.feature.WorldGenerator;
 
 import appalachia.api.AppalachiaBlocks;
 import appalachia.api.block.IAppalachiaBlockLeavesFallen;
-import appalachia.block.AppalachiaBlockPair;
-import appalachia.block.leaves.AppalachiaBlockLeaves;
 import appalachia.block.leaves.fallen.AppalachiaBlockLeavesFallen;
-import appalachia.block.logs.AppalachiaBlockLog;
 import appalachia.block.vines.AppalachiaBlockVine;
-import appalachia.rtg.world.gen.feature.tree.rtg.AppalachiaTree;
-import appalachia.rtg.world.gen.feature.tree.rtg.TreeAcerRubrum;
+import appalachia.rtg.world.biome.deco.DecoAPLTree;
+import appalachia.rtg.world.gen.feature.tree.rtg.*;
 
 import rtg.api.world.deco.*;
 import rtg.api.world.deco.collection.DecoCollectionBase;
-import rtg.api.world.deco.helper.DecoHelper5050;
-import rtg.api.world.deco.helper.DecoHelperRandomSplit;
-import rtg.api.world.gen.feature.tree.rtg.TreeRTG;
-import rtg.api.world.gen.feature.tree.rtg.TreeRTGBetulaPapyrifera;
-import rtg.api.world.gen.feature.tree.rtg.TreeRTGPiceaSitchensis;
-import rtg.api.world.gen.feature.tree.rtg.TreeRTGPinusPonderosa;
 
 
 /**
  * @author WhichOnesPink
+ * Red Maple, Hackberry, American Elm, Black Spruce, Tamarack
  */
 public class DecoCollectionAdirondackBog extends DecoCollectionBase {
 
     protected static int treeMaxY = 220;
     protected static int shrubMaxY = 220;
-    
-    private static AppalachiaBlockPair redMaple = new AppalachiaBlockPair();
-    private static AppalachiaBlockPair papyriferaOak = new AppalachiaBlockPair();
-    private static AppalachiaBlockPair papyriferaSpruce = new AppalachiaBlockPair();
-    private static AppalachiaBlockPair ponderosaOak = new AppalachiaBlockPair();
-    private static AppalachiaBlockPair ponderosaChestnut = new AppalachiaBlockPair();
-    private static AppalachiaBlockPair sitchensis = new AppalachiaBlockPair();
+
+    protected float redMapleNoiseMin = -5f;
+    protected float redMapleNoiseMax = -1f;
+    protected float hackberryNoiseMin = -1.75f;
+    protected float hackberryNoiseMax = 0f;
+    protected float americanElmNoiseMin = -2f;
+    protected float americanElmNoiseMax = 2f;
+    protected float blackSpruceNoiseMin = 1f;
+    protected float blackSpruceNoiseMax = 5f;
+    protected float tamarackNoiseMin = 2f;
+    protected float tamarackNoiseMax = 6f;
+
+    // Tends to return values between -3f to 5f, with some overflow.
+    private DecoTree.Distribution swampDistribution = new DecoTree.Distribution(100f, 6f, 0.8f);
     
     public DecoCollectionAdirondackBog(boolean fallenTrees) {
 
-        AppalachiaTree aplRedMaple = new TreeAcerRubrum();
-        aplRedMaple.setLogBlock(redMaple.log);
-        aplRedMaple.setLeavesBlock(redMaple.leaves);
-        aplRedMaple.setMinTrunkSize(4);
-        aplRedMaple.setMaxTrunkSize(8);
-        aplRedMaple.setMinCrownSize(8);
-        aplRedMaple.setMaxCrownSize(12);
-        DecoTree oakMaple = new DecoTree(aplRedMaple);
-        oakMaple.setLoops(1);
-        oakMaple.setTreeType(DecoTree.TreeType.RTG_TREE);
-        oakMaple.getDistribution().setNoiseDivisor(100f);
-        oakMaple.getDistribution().setNoiseFactor(6f);
-        oakMaple.getDistribution().setNoiseAddend(0.8f);
-        oakMaple.setTreeCondition(DecoTree.TreeCondition.NOISE_LESSER_AND_RANDOM_CHANCE);
-        oakMaple.setTreeConditionNoise(0.2f);
-        oakMaple.setTreeConditionChance(1);
-        oakMaple.setMaxY(treeMaxY);
-        this.addDeco(oakMaple);
+        // Red Maple.
+        AppalachiaTree treeRedMaple = new TreeAcerRubrum();
+        this.addTree(treeRedMaple);
+        this.addDeco(new DecoAPLTree(treeRedMaple)
+            .setMaxY(treeMaxY)
+            .setDistribution(swampDistribution)
+            .setTreeCondition(DecoTree.TreeCondition.RANDOM_NOT_EQUALS_CHANCE)
+            .setTreeConditionNoise(redMapleNoiseMin)
+            .setTreeConditionNoise2(redMapleNoiseMax)
+            .setTreeConditionChance(3)
+            //.setLoops(2)
+        );
 
-        TreeRTG papyriferaTreeOak = new TreeRTGBetulaPapyrifera();
-        papyriferaTreeOak.setLogBlock(papyriferaOak.log);
-        papyriferaTreeOak.setLeavesBlock(papyriferaOak.leaves);
-        papyriferaTreeOak.setMinTrunkSize(4);
-        papyriferaTreeOak.setMaxTrunkSize(8);
-        papyriferaTreeOak.setMinCrownSize(6);
-        papyriferaTreeOak.setMaxCrownSize(16);
-        this.addTree(papyriferaTreeOak);
-        DecoTree paperOak = new DecoTree(papyriferaTreeOak);
-        paperOak.setStrengthFactorForLoops(8f);
-        paperOak.setTreeType(DecoTree.TreeType.RTG_TREE);
-        paperOak.setTreeCondition(DecoTree.TreeCondition.RANDOM_CHANCE);
-        paperOak.setTreeConditionChance(1);
-        paperOak.setMaxY(treeMaxY);
-        
-        TreeRTG papyriferaTreeSpruce = new TreeRTGBetulaPapyrifera();
-        papyriferaTreeSpruce.setLogBlock(papyriferaSpruce.log);
-        papyriferaTreeSpruce.setLeavesBlock(papyriferaSpruce.leaves);
-        papyriferaTreeSpruce.setMinTrunkSize(4);
-        papyriferaTreeSpruce.setMaxTrunkSize(8);
-        papyriferaTreeSpruce.setMinCrownSize(6);
-        papyriferaTreeSpruce.setMaxCrownSize(16);
-        this.addTree(papyriferaTreeSpruce);
-        DecoTree paperSpruce = new DecoTree(papyriferaTreeSpruce);
-        paperSpruce.setStrengthFactorForLoops(8f);
-        paperSpruce.setTreeType(DecoTree.TreeType.RTG_TREE);
-        paperSpruce.setTreeCondition(DecoTree.TreeCondition.RANDOM_CHANCE);
-        paperSpruce.setTreeConditionChance(1);
-        paperSpruce.setMaxY(treeMaxY);
-        DecoHelper5050 decoPaper = new DecoHelper5050(paperOak, paperSpruce);
-        this.addDeco(decoPaper);
+        // Tamarack.
+        AppalachiaTree treeTamarack = new TreeLarixLaricina();
+        this.addTree(treeTamarack);
+        this.addDeco(new DecoAPLTree(treeTamarack)
+                .setMaxY(treeMaxY)
+                .setDistribution(swampDistribution)
+                .setTreeCondition(DecoTree.TreeCondition.RANDOM_CHANCE)
+                .setTreeConditionNoise(tamarackNoiseMin)
+                .setTreeConditionNoise2(tamarackNoiseMax)
+                .setTreeConditionChance(3)
+            //.setLoops(2)
+        );
 
-        TreeRTG ponderosaOakTree = new TreeRTGPinusPonderosa();
-        ponderosaOakTree.setLogBlock(ponderosaOak.log);
-        ponderosaOakTree.setLeavesBlock(ponderosaOak.leaves);
-        ponderosaOakTree.setMinTrunkSize(11);
-        ponderosaOakTree.setMaxTrunkSize(21);
-        ponderosaOakTree.setMinCrownSize(15);
-        ponderosaOakTree.setMaxCrownSize(29);
-        this.addTree(ponderosaOakTree);
-        DecoTree oakPines = new DecoTree(ponderosaOakTree);
-        oakPines.setStrengthFactorForLoops(10f);
-        oakPines.setTreeType(DecoTree.TreeType.RTG_TREE);
-        oakPines.getDistribution().setNoiseDivisor(100f);
-        oakPines.getDistribution().setNoiseFactor(6f);
-        oakPines.getDistribution().setNoiseAddend(0.8f);
-        oakPines.setTreeCondition(DecoTree.TreeCondition.NOISE_LESSER_AND_RANDOM_CHANCE);
-        oakPines.setTreeConditionNoise(0.2f);
-        oakPines.setTreeConditionChance(1);
-        oakPines.setMaxY(85);
-        
-        TreeRTG ponderosaChestnutTree = new TreeRTGPinusPonderosa();
-        ponderosaChestnutTree.setLogBlock(ponderosaChestnut.log);
-        ponderosaChestnutTree.setLeavesBlock(ponderosaChestnut.leaves);
-        ponderosaChestnutTree.setMinTrunkSize(11);
-        ponderosaChestnutTree.setMaxTrunkSize(21);
-        ponderosaChestnutTree.setMinCrownSize(15);
-        ponderosaChestnutTree.setMaxCrownSize(29);
-        this.addTree(ponderosaChestnutTree);
-        DecoTree chestnutPines = new DecoTree(ponderosaChestnutTree);
-        chestnutPines.setStrengthFactorForLoops(10f);
-        chestnutPines.setTreeType(DecoTree.TreeType.RTG_TREE);
-        chestnutPines.getDistribution().setNoiseDivisor(100f);
-        chestnutPines.getDistribution().setNoiseFactor(6f);
-        chestnutPines.getDistribution().setNoiseAddend(0.8f);
-        chestnutPines.setTreeCondition(DecoTree.TreeCondition.NOISE_LESSER_AND_RANDOM_CHANCE);
-        chestnutPines.setTreeConditionNoise(0.2f);
-        chestnutPines.setTreeConditionChance(1);
-        chestnutPines.setMaxY(85);
-        DecoHelper5050 decoPines = new DecoHelper5050(oakPines, chestnutPines);
-        this.addDeco(decoPines);
+        // American Elm.
+        AppalachiaTree treeAmericanElm = new TreeUlmusAmericana();
+        this.addTree(treeAmericanElm);
+        this.addDeco(new DecoAPLTree(treeAmericanElm)
+                .setMaxY(treeMaxY)
+                .setDistribution(swampDistribution)
+                .setTreeCondition(DecoTree.TreeCondition.RANDOM_CHANCE)
+                .setTreeConditionNoise(americanElmNoiseMin)
+                .setTreeConditionNoise2(americanElmNoiseMax)
+                .setTreeConditionChance(5)
+            //.setLoops(2)
+        );
 
-        TreeRTG sitchensisTree = new TreeRTGPiceaSitchensis();
-        sitchensisTree.setLogBlock(sitchensis.log);
-        sitchensisTree.setLeavesBlock(sitchensis.leaves);
-        sitchensisTree.setMinTrunkSize(4);
-        sitchensisTree.setMaxTrunkSize(10);
-        sitchensisTree.setMinCrownSize(6);
-        sitchensisTree.setMaxCrownSize(14);
-        this.addTree(sitchensisTree);
-        DecoTree oakPine = new DecoTree(sitchensisTree);
-        oakPine.setStrengthFactorForLoops(8f);
-        oakPine.setTreeType(DecoTree.TreeType.RTG_TREE);
-        oakPine.setTreeCondition(DecoTree.TreeCondition.RANDOM_CHANCE);
-        oakPine.setTreeConditionChance(1);
-        oakPine.setMaxY(treeMaxY);
-        WorldGenerator vanillaTreeDefinition = new WorldGenTrees(false);
-        DecoTree vanillaTrees = new DecoTree(vanillaTreeDefinition);
-        vanillaTrees.setStrengthFactorForLoops(3f);
-        vanillaTrees.setTreeType(DecoTree.TreeType.WORLDGEN);
-        vanillaTrees.setTreeCondition(DecoTree.TreeCondition.RANDOM_CHANCE);
-        vanillaTrees.setTreeConditionChance(2);
-        vanillaTrees.setMaxY(treeMaxY);
-        DecoHelperRandomSplit decoHelperRandomSplit = new DecoHelperRandomSplit();
-        decoHelperRandomSplit.decos = new DecoBase[]{oakPine, vanillaTrees};
-        decoHelperRandomSplit.chances = new int[]{12, 4};
-        this.addDeco(decoHelperRandomSplit);
+        // Black Spruce.
+        AppalachiaTree treeBlackSpruce = new TreePiceaMariana();
+        this.addTree(treeBlackSpruce);
+        this.addDeco(new DecoAPLTree(treeBlackSpruce)
+                .setMaxY(treeMaxY)
+                .setDistribution(swampDistribution)
+                .setTreeCondition(DecoTree.TreeCondition.RANDOM_CHANCE)
+                .setTreeConditionNoise(blackSpruceNoiseMin)
+                .setTreeConditionNoise2(blackSpruceNoiseMax)
+                .setTreeConditionChance(3)
+            //.setLoops(2)
+        );
 
-        // Add some fallen trees of the oak and spruce variety (50/50 distribution).
-        DecoFallenTree decoFallenOak = new DecoFallenTree();
-        decoFallenOak.setLogCondition(DecoFallenTree.LogCondition.RANDOM_CHANCE);
-        decoFallenOak.setLogConditionChance(16);
-        decoFallenOak.setMaxY(80);
-        decoFallenOak.setLogBlock(AppalachiaBlocks.log_yellow_birch_01.getDefaultState());
-        decoFallenOak.setLeavesBlock(Blocks.LEAVES.getDefaultState());
-        decoFallenOak.setMinSize(3);
-        decoFallenOak.setMaxSize(6);
-        DecoFallenTree decoFallenSpruce = new DecoFallenTree();
-        decoFallenSpruce.setLogCondition(DecoFallenTree.LogCondition.RANDOM_CHANCE);
-        decoFallenSpruce.setLogConditionChance(24);
-        decoFallenSpruce.setMaxY(80);
-        decoFallenSpruce.setLogBlock(AppalachiaBlockLog.getRandomLog().getDefaultState());
-        decoFallenSpruce.setLeavesBlock(AppalachiaBlockLeaves.getRandomLeaves().getDefaultState());
-        decoFallenSpruce.setMinSize(3);
-        decoFallenSpruce.setMaxSize(6);
-        DecoHelper5050 decoFallenTree = new DecoHelper5050(decoFallenOak, decoFallenSpruce);
-        this.addDeco(decoFallenTree, fallenTrees);
+        // Hackberry.
+        AppalachiaTree treeHackberry = new TreeCeltisOccidentalis(true);
+        this.addTree(treeHackberry);
+        this.addDeco(new DecoAPLTree(treeHackberry)
+                .setMaxY(treeMaxY)
+                .setDistribution(swampDistribution)
+                .setTreeCondition(DecoTree.TreeCondition.RANDOM_CHANCE)
+                .setTreeConditionNoise(hackberryNoiseMin)
+                .setTreeConditionNoise2(hackberryNoiseMax)
+                .setTreeConditionChance(5)
+            //.setLoops(1)
+        );
+
+        // Add some fallen trees using the log blocks of the all the trees in this collection.
+        DecoFallenTree decoFallenTrees = new DecoFallenTree();
+        decoFallenTrees.setLogCondition(DecoFallenTree.LogCondition.RANDOM_CHANCE);
+        decoFallenTrees.setLogConditionChance(16);
+        decoFallenTrees.setMaxY(80);
+        decoFallenTrees.setRandomLogBlocks(this.treeLogs().toArray(new IBlockState[0]));
+        decoFallenTrees.setMinSize(3);
+        decoFallenTrees.setMaxSize(5);
+        this.addDeco(decoFallenTrees, fallenTrees);
 
         // Shrubs to fill in the blanks.
-        DecoShrub decoShrubOak = new DecoShrub();
-        decoShrubOak.setSize(1);
-        decoShrubOak.setMinY(64);
-        decoShrubOak.setMaxY(shrubMaxY);
-        decoShrubOak.setStrengthFactor(8f);
-        decoShrubOak.setChance(2);
-        this.addDeco(decoShrubOak);
+        DecoShrub decoShrub = new DecoShrub();
+        decoShrub.setSize(1);
+        decoShrub.setMinY(63);
+        decoShrub.setUseDefaultRandom(true);
+        decoShrub.setRandomLogBlocks(this.treeLogs().toArray(new IBlockState[0]));
+        decoShrub.setRandomLeavesBlocks(this.treeLeaves().toArray(new IBlockState[0]));
+        decoShrub.setMaxY(shrubMaxY);
+        decoShrub.setStrengthFactor(8f);
+        decoShrub.setChance(2);
+        this.addDeco(decoShrub);
 
         DecoBoulder decoBoulder1 = new DecoBoulder();
         decoBoulder1.setBoulderBlock(Blocks.COBBLESTONE.getDefaultState());
